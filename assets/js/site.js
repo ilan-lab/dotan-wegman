@@ -9,6 +9,7 @@ var CONFIG = {
     hero: "היי דותן, ראיתי את הדף על גלי הלם ממוקדים ואשמח לשמוע אם זה מתאים לי.",
     cond: "היי דותן, רציתי לשאול אם טיפול בגלי הלם ממוקדים יכול להתאים לכאב שלי.",
     about: "היי דותן, אשמח לתאם שיחה לגבי טיפול.",
+    work: "היי דותן, ראיתי את הדף ואשמח שתבדוק אם הטיפול מתאים לי.",
     sticky: "היי דותן, הגעתי מהדף על גלי הלם ממוקדים ואשמח לפרטים."
   };
   var wa = function (t) { return "https://wa.me/" + CONFIG.phoneIntl + (t ? "?text=" + encodeURIComponent(t) : ""); };
@@ -41,11 +42,14 @@ var CONFIG = {
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* reveal on view (opacity/transform only) */
-  var els = document.querySelectorAll("[data-r]");
+  /* reveal on view (opacity/transform/clip only, no layout) */
+  document.querySelectorAll("[data-stagger]").forEach(function (g) {
+    [].forEach.call(g.children, function (c, i) { c.style.setProperty("--d", (i * 0.08).toFixed(2) + "s"); });
+  });
+  var els = document.querySelectorAll("[data-r],[data-ph],[data-stagger]");
   if (reduce || !("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); }
   else {
-    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
     els.forEach(function (e) { io.observe(e); });
   }
 
@@ -57,10 +61,33 @@ var CONFIG = {
     new IntersectionObserver(function (e) { leadIn = e[0].isIntersecting; upd(); }, { threshold: 0.15 }).observe(lead);
   }
 
-  /* GSAP: hero entrance + focus-diagram wave loop (only while visible) */
+  /* GSAP: gentle parallax on the photo band + focus-diagram wave loop.
+     transform only, rAF-batched, runs only while the element is on screen. */
   window.addEventListener("load", function () {
     if (reduce || !window.gsap) return;
     var g = window.gsap;
+
+    var px = [];
+    var band = document.querySelector("[data-px]");
+    if (band) px.push({ el: band, box: band.parentElement, amt: 0.12, set: g.quickSetter(band, "y", "px"), on: false });
+    if (px.length) {
+      var vh = window.innerHeight, ticking = false;
+      var run = function () {
+        ticking = false;
+        px.forEach(function (p) {
+          if (!p.on) return;
+          var r = p.box.getBoundingClientRect();
+          var c = r.top + r.height / 2 - vh / 2;
+          var lim = r.height * (p.hero ? 0.04 : 0.09);
+          p.set(Math.max(-lim, Math.min(lim, c * p.amt)));
+        });
+      };
+      var pio = new IntersectionObserver(function (es) { es.forEach(function (e) { px.forEach(function (p) { if (p.box === e.target) p.on = e.isIntersecting; }); }); });
+      px.forEach(function (p) { pio.observe(p.box); });
+      window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive: true });
+      window.addEventListener("resize", function () { vh = window.innerHeight; }, { passive: true });
+    }
+
     var svg = document.getElementById("focus-svg");
     if (!svg) return;
     var tl = g.timeline({ repeat: -1, paused: true });
