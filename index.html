@@ -424,8 +424,8 @@
         </ul>
       </div>
       <form class="form" id="leadForm" novalidate data-r>
-        <div class="fld"><label for="f-name">שם</label><input id="f-name" name="name" autocomplete="name" required placeholder="איך קוראים לך?" aria-describedby="e-name"><span class="err" id="e-name" role="alert"></span></div>
-        <div class="fld"><label for="f-phone">טלפון</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" required placeholder="050-0000000" aria-describedby="e-phone"><span class="err" id="e-phone" role="alert"></span></div>
+        <div class="fld"><label for="f-name">שם</label><input id="f-name" name="name" maxlength="80" autocomplete="name" required placeholder="איך קוראים לך?" aria-describedby="e-name"><span class="err" id="e-name" role="alert"></span></div>
+        <div class="fld"><label for="f-phone">טלפון</label><input id="f-phone" name="phone" maxlength="22" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" required placeholder="050-0000000" aria-describedby="e-phone"><span class="err" id="e-phone" role="alert"></span></div>
         <fieldset class="fld"><legend>מה כואב?</legend>
           <div class="chips">
             <label><input type="checkbox" name="pain" value="כתף"><span>כתף</span></label>
@@ -436,7 +436,7 @@
             <label><input type="checkbox" name="pain" value="אחר"><span>אחר</span></label>
           </div>
         </fieldset>
-        <div class="fld"><label for="f-note">כמה מילים על הכאב (לא חובה)</label><textarea id="f-note" name="note" rows="3" placeholder="למשל: כואב לי בעקב כבר חצי שנה, בעיקר בבוקר"></textarea></div>
+        <div class="fld"><label for="f-note">כמה מילים על הכאב (לא חובה)</label><textarea id="f-note" name="note" maxlength="400" rows="3" placeholder="למשל: כואב לי בעקב כבר חצי שנה, בעיקר בבוקר"></textarea></div>
         <button class="btn btn-wa" type="submit"><svg aria-hidden="true"><use href="#i-wa"/></svg>שליחה לדותן בוואטסאפ</button>
         <p class="fine">הלחיצה פותחת את וואטסאפ עם ההודעה שמילאתם. הפרטים לא נשמרים באתר ונשלחים רק כשתלחצו "שליחה" בוואטסאפ.</p>
       </form>
